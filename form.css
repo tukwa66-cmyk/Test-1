@@ -1,0 +1,384 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "TH Sarabun New", "Sarabun", serif;
+  background-color: #ededed;
+  font-size: 16px;
+  line-height: 1.15;
+}
+
+h1 {
+  font-size: 18px;
+  text-align: center;
+  font-weight: normal;
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+
+p,
+label,
+input {
+  font-size: 16px;
+  font-weight: normal;
+  line-height: 1.1;
+}
+
+input {
+  width: 100%;
+  border: none;
+  border-bottom: 1.5px dotted #000;
+  background: transparent;
+  line-height: 1.1;
+  padding: 0;
+}
+
+input:focus {
+  outline: none;
+}
+
+/* เส้นบน */
+.top-line {
+  border-bottom: 1px solid #000;
+  margin-bottom: 6px;
+}
+
+/* ============================================================
+   LAYOUT
+============================================================ */
+.line {
+  display: flex;
+  align-items: baseline;
+  gap: 0.08cm;
+  margin-bottom: 0.12cm;
+  flex-wrap: wrap;
+}
+
+.input {
+  flex: 1;
+  position: relative;
+}
+
+.page {
+  width: 100%;
+  max-width: 800px;
+  height: auto;
+  margin: 20px auto;
+  padding: 3cm 2.5cm 2.5cm 3cm;
+  background: #fff;
+  position: relative;
+}
+
+.date {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+/* ============================================================
+   RADIO
+============================================================ */
+.radio-group {
+  display: flex;
+  gap: 4px;
+}
+
+.radio {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.radio input {
+  display: none;
+}
+
+.checkmark {
+  width: 0.45cm;
+  height: 0.45cm;
+  border: 1px solid #000;
+  display: inline-block;
+  margin-right: 0.15cm;
+  position: relative;
+}
+
+.checkmark::after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 0.1cm;
+  top: 0.05cm;
+  width: 0.12cm;
+  height: 0.25cm;
+  border: solid #000;
+  border-width: 0 1.5px 1.5px 0;
+  transform: rotate(45deg);
+}
+
+.radio input:checked+.checkmark::after {
+  display: block;
+}
+
+/* ============================================================
+   INPUT BAR
+============================================================ */
+.bar::before,
+.bar::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  width: 0;
+  height: 1.5px;
+  background: #4a89dc;
+  transition: 0.2s;
+}
+
+.bar::before {
+  left: 50%;
+}
+
+.bar::after {
+  right: 50%;
+}
+
+input:focus~.bar::before,
+input:focus~.bar::after {
+  width: 50%;
+}
+
+/* ============================================================
+   COMMENT
+============================================================ */
+.official-section-title {
+  text-align: center;
+  margin-bottom: 0.2cm;
+  font-weight: normal;
+}
+
+.comment-title {
+  font-weight: normal;
+}
+
+.comment-line {
+  border-bottom: 1.5px dotted #000;
+  height: 0.25cm;
+  margin-bottom: 0.1cm;
+}
+
+/* ============================================================
+   SIGNATURE
+============================================================ */
+.signature-section {
+  margin-top: 0.3cm;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.sig-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.2cm;
+}
+
+.sig-label {
+  font-size: 16px;
+}
+
+.sig-box {
+  width: 6.5cm;
+  border-bottom: 1.5px dotted #000;
+  min-height: 1cm;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.sig-box img {
+  max-height: 1cm;
+  max-width: 100%;
+}
+
+.sig-placeholder {
+  font-size: 13px;
+  color: #aaa;
+  pointer-events: none;
+  user-select: none;
+}
+
+.sig-name-row {
+  display: flex;
+  align-items: baseline;
+  font-size: 16px;
+  margin-top: 2px;
+}
+
+.sig-name-row .name-input-wrap {
+  border-bottom: 1.5px dotted #000;
+  width: 6.5cm;
+  text-align: center;
+}
+
+/* ============================================================
+   MODAL
+============================================================ */
+.sig-modal-overlay {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  align-items: center;
+  justify-content: center;
+}
+
+.sig-modal-overlay.open {
+  display: flex;
+}
+
+.sig-modal {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 20px;
+  width: 90vw;
+  max-width: 440px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Canvas ปรับขนาดตาม modal — JS จะ init pixel ที่ถูกต้องอีกที */
+#signatureCanvas {
+  border: 1.5px solid #bbb;
+  background: #fafafa;
+  display: block;
+  width: 100%;
+  height: 160px;
+  cursor: crosshair;
+  touch-action: none;
+  /* ป้องกัน browser scroll ขณะวาด */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* ============================================================
+   SAVE BUTTON
+============================================================ */
+#saveBtn {
+  position: fixed;
+  bottom: 2cm;
+  right: 2cm;
+  z-index: 1000;
+  font-size: 16px;
+  padding: 0.3cm 0.7cm;
+  background: #1a5276;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#saveBtn:hover {
+  background: #154360;
+}
+
+/* ============================================================
+   PRINT
+============================================================ */
+@page {
+  size: A4;
+  margin: 0;
+}
+
+@media print {
+  body {
+    background: none;
+    font-size: 16pt;
+  }
+
+  #saveBtn,
+  .sig-modal-overlay,
+  .sig-placeholder,
+  .bar {
+    display: none !important;
+  }
+
+  .page {
+    width: 21cm !important;
+    height: 29.7cm !important;
+    padding: 3cm 2.5cm 2.5cm 3cm !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    page-break-after: always;
+    overflow: hidden;
+  }
+
+  .page:last-of-type {
+    page-break-after: auto;
+  }
+}
+/* วันที่ใต้ลายเซ็น */
+.sig-date-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.1cm;
+  margin-left: 1cm;
+  font-size: 1rem;
+}
+
+.date-input-wrap {
+  width: 1.4cm;
+  position: relative;
+}
+
+.date-input-wrap input {
+  text-align: center;
+  border-bottom: 1.8px dotted #000;
+  width: 100%;
+}
+/* ===== กรรมการ ===== */
+.committee-row {
+  display: grid !important;
+  grid-template-columns: 30px 1fr 90px 90px;
+  align-items: center;
+  margin-left: 1.5cm;
+  margin-bottom: 0.15cm;
+}
+
+.committee-row input[type="text"] {
+  width: 95%;
+}
+
+.committee-row label {
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+@media (max-width: 600px) {
+  body {
+    font-size: 15px;
+  }
+
+  .page {
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 16px;
+  }
+
+  h1 {
+    font-size: 18px;
+  }
+}
