@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <title>แบบเสนอขออนุมัติจัดประชุมพิจารณาเค้าโครงวิทยานิพนธ์</title>
+  <link rel="stylesheet" href="b2.css" />
+</head>
+
+<body>
+
+  <!-- ===== SIGNATURE MODAL ===== -->
+  <div class="sig-modal-overlay" id="signatureModal">
+    <div class="sig-modal">
+      <p style="text-align:center; font-size:17px; margin-bottom:10px;">ลงลายมือชื่อในกรอบด้านล่าง</p>
+      <canvas id="signatureCanvas" width="380" height="160"></canvas>
+      <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:12px;">
+        <button onclick="clearCanvas()"
+          style="padding:6px 16px; cursor:pointer; border:1px solid #888; background:#f5f5f5; border-radius:4px; font-size:15px;">ล้าง</button>
+        <button onclick="closeSignatureModal()"
+          style="padding:6px 16px; cursor:pointer; border:1px solid #888; background:#f5f5f5; border-radius:4px; font-size:15px;">ยกเลิก</button>
+        <button onclick="saveSignature()"
+          style="padding:6px 20px; cursor:pointer; border:none; background:#1a5276; color:#fff; border-radius:4px; font-size:15px;">บันทึกลายเซ็น</button>
+      </div>
+    </div>
+  </div>
+  <!-- หน้าแรก -->
+  <div class="page" style="padding-top: 1.8cm;">
+    <div class="container">
+      <div class="bw2-box">
+        <span class="bw2-text">บว 2</span>
+      </div>
+    </div>
+    <h1 style="text-align: center;margin-bottom: 0.01cm;">แบบเสนอขออนุมัติจัดประชุมพิจารณาเค้าโครงวิทยานิพนธ์</h1>
+    <h1>บัณฑิตวิทยาลัยมหาวิทยาลัยทักษิณ</h1>
+    <div class="top-line"></div>
+
+    <form method="post" id="registerForm">
+
+      <!-- เรียน ประธานกรรมการ -->
+      <div class="line">
+        <label>เรียน&ensp; ประธานกรรมการผู้รับผิดชอบหลักสูตร</label>
+        <div class="input">
+          <input type="text" name="chairmanCurriculum" id="chairmanCurriculum" required />
+          <span class="bar"></span>
+        </div>
+      </div>
+      <!-- สาขาวิชา -->
+      <div class="line" style="margin-left: 1.2cm;">
+        <label for="majorTo">สาขาวิชา</label>
+        <div class="input">
+          <input type="text" name="majorTo" id="majorTo" required />
+          <span class="bar"></span>
+        </div>
+      </div>
+
+      <!-- ชื่อ-นามสกุล + รหัส -->
+      <div class="line" style="margin-left: 1.2cm;display: flex;">
+        <label for="name">ข้าพเจ้า</label>
+        <div class="input" style="max-width: 1.5cm;">
+          <select name="title" required
+            style="width:100%; border:none; border-bottom:1.5px dotted  #000 ; background:transparent;">
+            <option value="">คำนำหน้า</option>
+            <option value="นาย">นาย</option>
+            <option value="นาง">นาง</option>
+            <option value="นางสาว">นางสาว</option>
+          </select>
+        </div>
+
+        <div class="input" style="flex:1;">
+          <input type="text" name="name" placeholder="ชื่อ-นามสกุล" required>
+          <span class="bar"></span>
+        </div>
+
+        <label for="IdNumber">รหัสประจำตัว</label>
+        <div class="input" style="max-width: 160px;">
+          <input type="text" name="IdNumber" id="IdNumber" required />
+          <span class="bar"></span>
+        </div>
+      </div>
+
+      <!-- ระดับนิสิต + หลักสูตร -->
+      <div class="line">
+        <label>นิสิตระดับ</label>
+        <div class="radio-group">
+          <label class="radio" for="master">
+            <input type="radio" name="degree" value="master" id="master" required>
+            <span class="checkmark"></span>ปริญญาโท
+          </label>
+          <label class="radio" for="phd">
+            <input type="radio" name="degree" value="phd" id="phd">
+            <span class="checkmark"></span>ปริญญาเอก
+          </label>
+        </div>
+        <label for="curriculumName">&ensp;หลักสูตร</label>
+        <div class="input">
+          <input type="text" name="curriculumName" id="curriculumName" required />
+          <span class="bar"></span>
+        </div>
+      </div>
+
+      <!-- สาขาวิชา + ภาค -->
+      <div class="line">
+        <label for="major">สาขาวิชา</label>
+        <div class="input">
+          <input type="text" name="major" id="major" required />
+          <span class="bar"></span>
+        </div>
+        <label>ภาค</label>
+        <div class="radio-group">
+          <label class="radio" for="sectionNormal">
+            <input type="radio" name="section" value="normal" id="sectionNormal" required>
+            <span class="checkmark"></span>ปกติ
+          </label>
+          <label class="radio" for="sectionSpecial">
+            <input type="radio" name="section" value="special" id="sectionSpecial">
+            <span class="checkmark"></span>พิเศษ
+          </label>
+        </div>
+      </div>
+
+      <!-- ขออนุมัติจัดประชุม -->
+      <div class="line">
+        <label>ขออนุมัติจัดประชุมพิจารณาเค้าโครงวิทยานิพนธ์ เรื่อง</label>
+        <div class="input">
+          <input type="text" name="thesisTopicShort" id="thesisTopicShort" required />
+          <span class="bar"></span>
+        </div>
+      </div>
+
+      <!-- 1.1 ชื่อเรื่องภาษาไทย -->
+      <div class="line" style="margin-left: 1cm;">
+        <label>1.1) ชื่อเรื่องภาษาไทย</label>
+        <div class="input">
+          <input type="textarea" name="thesisTitleTH1" id="thesisTitleTH1" required />
+          <span class="bar"></span>
+        </div>
+      </div>
+      <div class="line">
+        <div class="input"><input type="text" name="thesisTitleTH2" /><span class="bar"></span></div>
+      </div>
+      <div class="line">
+        <div class="input"><input type="text" name="thesisTitleTH3" /><span class="bar"></span></div>
+      </div>
+
+      <!-- 1.2 ชื่อเรื่องภาษาอังกฤษ -->
+      <div class="line" style="margin-left: 1cm;">
+        <label>1.2) ชื่อเรื่องภาษาอังกฤษ</label>
+        <div class="input">
+          <input type="text" name="thesisTitleEN1" id="thesisTitleEN1" required />
+          <span class="bar"></span>
+        </div>
+      </div>
+      <div class="line">
+        <div class="input"><input type="text" name="thesisTitleEN2" /><span class="bar"></span></div>
+      </div>
+      <div class="line">
+        <div class="input"><input type="text" name="thesisTitleEN3" /><span class="bar"></span></div>
+      </div>
+
+      <!-- 2) คณะกรรมการที่ปรึกษา -->
+      <p class="comment-title" style="margin-top: 0.4cm;">2) คณะกรรมการที่ปรึกษาวิทยานิพนธ์</p>
+
+      <div class="line" style="margin-left: 1.3cm;">
+        <label>2.1)</label>
+        <div class="input"><input type="text" name="advisor1" id="advisor1" required /><span class="bar"></span></div>
+        <label style="white-space:nowrap;">ประธานกรรมการ</label>
+      </div>
+      <div class="line" style="margin-left: 1.3cm;">
+        <label>2.2)</label>
+        <div class="input"><input type="text" name="advisor2" /><span class="bar"></span></div>
+        <label style="white-space:nowrap;">กรรมการ</label>
+      </div>
+      <div class="line" style="margin-left: 1.3cm;">
+        <label>2.3)</label>
+        <div class="input"><input type="text" name="advisor3" /><span class="bar"></span></div>
+        <label style="white-space:nowrap;">กรรมการ</label>
+      </div>
+
+      <!-- จำนวนชุด -->
+      <div class="line indent2">
+        <label class="lbl">พร้อมกันนี้ได้ส่งเค้าโครงวิทยานิพนธ์มาด้วยแล้ว จำนวน</label>
+        <div style="width:1.5cm;text-align:center;">
+          <input type="number" name="copies" id="copies" min="1" required style="text-align: center;" />
+          <span class="bar"></span>
+        </div>
+        <label>ชุด</label>
+      </div>
+
+      <label class="line"
+        style="margin-left: 1.3cm; margin-top: 0.5cm;">จึงเรียนมาเพื่อโปรดพิจารณาดำเนินการต่อไป</label>
+
+      <!-- ลายเซ็นต์นิสิต -->
+      <div class="signature-section">
+        <div class="sig-row">
+          <span class="sig-label">ลงชื่อ</span>
+          <div class="sig-box" onclick="openSignatureModal('signatureData','signaturePrev','placeholderText')"
+            title="คลิกเพื่อลงนาม">
+            <img id="signaturePrev" style="display:none; max-height:1cm; max-width:100%;" alt="ลายเซ็น" />
+            <span class="sig-placeholder" id="placeholderText">คลิกเพื่อลงนาม</span>
+          </div>
+          <span>นิสิต</span>
+        </div>
+        <div class="sig-name-row">
+          <span class="paren">(</span>
+          <div class="name-input-wrap">
+            <input type="text" name="printName" id="printName" required style="text-align: center;" />
+          </div>
+          <span class="paren">)&ensp;&ensp;&ensp;&ensp;</span>
+        </div>
+        <div class="sig-date-row" style="margin-right: 1.5cm;">
+          <input type="number" id="sigDay" name="sigDay" placeholder="วันที่" style="width:1.2cm;"
+            pattern="[0-1][0-9]{2}" min="1" max="31" required>
+          <span>/</span>
+          <input type="number" id="sigMonth" name="sigMonth" placeholder="เดือน" style="width:1.5cm;"
+            pattern="[0-1][0-9]{2}" min="1" max="12" required>
+          <span>/</span>
+          <input type="number" id="sigYear" name="sigYear" placeholder="ปี" style="width:2.2cm;" min="2568" max="3000"
+            required>
+        </div>
+      </div>
+      <input type="hidden" name="signature" id="signatureData" />
+
+      <!-- ความเห็นชอบของคณะกรรมการที่ปรึกษาวิทยานิพนธ์ -->
+      <p style="margin-top: 18px;"><u>ความเห็นชอบของคณะกรรมการที่ปรึกษาวิทยานิพนธ์</u></p>
+      <!-- กรรมการ 1 -->
+      <div style="display: flex; align-items: baseline; width: 100%; margin-top: 0.5cm;">
+        <span style="white-space: nowrap; margin-right: 5px;">1)</span>
+        <div style="flex: 1; border-bottom: 1.5px dotted #000; height: 14px;"></div>
+      </div>
+      <div class="advisor-sig-row">
+        <div class="advisor-name-part">
+          <span>(ลงชื่อ)</span>
+          <div class="l-dot"></div>
+          <span class="p-l">ประธานกรรมการ</span>
+        </div>
+        <span class="p-l">(........./........../..........)</span>
+      </div>
+      <!-- กรรมการ 2 -->
+      <div style="display: flex; align-items: baseline; width: 100%; margin-top: 0.5cm;">
+        <span style="white-space: nowrap; margin-right: 5px;">2)</span>
+        <div style="flex: 1; border-bottom: 1.5px dotted #000; height: 14px;"></div>
+      </div>
+
+      <div class="advisor-sig-row">
+        <div class="advisor-name-part">
+          <span>(ลงชื่อ)</span>
+          <div class="l-dot"></div>
+          <span class="p-l">กรรมการ</span>
+        </div>
+        <span class="p-l">(........./........../..........)</span>
+      </div>
+      <!-- กรรมการ 3 -->
+      <div style="display: flex; align-items: baseline; width: 100%; margin-top: 0.5cm;">
+        <span style="white-space: nowrap; margin-right: 5px;">3)</span>
+        <div style="flex: 1; border-bottom: 1.5px dotted #000; height: 14px;"></div>
+      </div>
+
+      <div class="advisor-sig-row">
+        <div class="advisor-name-part">
+          <span>(ลงชื่อ)</span>
+          <div class="l-dot"></div>
+          <span class="p-l">กรรมการ</span>
+        </div>
+        <span class="p-l">(........./........../..........)</span>
+      </div>
+    </form>
+  </div>
+
+  <!-- หน้าที่สอง -->
+  <div class="page">
+
+    <p style="text-align: center; margin: 0;">-2-</p>
+
+    <p class="line" style="margin-top: 10px;">เรียน คณบดีบัณฑิตวิทยาลัย</p>
+
+    <!-- ย่อหน้า -->
+    <div class="line" style="flex-wrap: wrap;">
+      <label
+        style="margin-left: 1.0cm;">เพื่อโปรดพิจารณาอนุมัติให้จัดประชุมพิจารณาเค้าโครงวิทยานิพนธ์ของนิสิตผู้นี้&ensp;
+      </label>
+      <div class="line" style="display: flex; align-items: baseline; width: 100%; flex-wrap: nowrap;">
+        <label style="white-space: nowrap;">ในวันที่</label>
+        <div style="width: 1.2cm; margin: 0 5px;">
+          <input type="text" name="meetDay" style="text-align: center;">
+        </div>
+
+        <label style="white-space: nowrap;">เดือน</label>
+        <div style="width: 3cm; margin: 0 5px;">
+          <input type="text" name="meetMonth" style="text-align: center;">
+        </div>
+
+        <label style="white-space: nowrap;">พ.ศ.</label>
+        <div style="width: 2.2cm; margin: 0 5px;">
+          <input type="text" name="meetYear" style="text-align: center;">
+        </div>
+
+        <label style="white-space: nowrap;">เวลา</label>
+        <div style="width: 2.2cm; margin: 0 5px;">
+          <input type="text" name="meetTime" style="text-align: center;">
+        </div>
+
+        <label style="white-space: nowrap;">น. ณ</label>
+
+        <div style="width: 6.5cm; margin-left: 5px; position: relative;">
+          <input type="text" name="meetPlace" style="width: 100%;">
+          <span class="bar"></span>
+        </div>
+      </div>
+    </div>
+    <div class="line" style="margin-top: 10px;">
+      <label>โดยมีคณะกรรมการพิจารณาเค้าโครงวิทยานิพนธ์ ดังนี้</label>
+    </div>
+
+    <!-- กรรมการ -->
+    <div class="committee-row">
+      <span>1.</span>
+      <input type="text" name="committee1">
+      <label class="checkbox">
+        <input type="checkbox">
+        <span class="box"></span>
+        ประธาน
+      </label>
+      <label class="checkbox">
+        <input type="checkbox">
+        <span class="box"></span>
+        กรรมการ
+      </label>
+    </div>
+    <div class="committee-row">
+      <span>2.</span>
+      <input type="text" name="committee2">
+      <label class="checkbox">
+        <input type="checkbox">
+        <span class="box"></span>
+        ประธาน
+      </label>
+      <label class="checkbox">
+        <input type="checkbox">
+        <span class="box"></span>
+        กรรมการ
+      </label>
+    </div>
+    <div class="committee-row">
+      <span>3.</span>
+      <input type="text" name="committee3">
+      <label class="checkbox">
+        <input type="checkbox">
+        <span class="box"></span>
+        ประธาน
+      </label>
+      <label class="checkbox">
+        <input type="checkbox">
+        <span class="box"></span>
+        กรรมการ
+      </label>
+    </div>
+    <div class="committee-row">
+      <span>4.</span>
+      <input type="text" name="committee4">
+      <label class="checkbox">
+        <input type="checkbox">
+        <span class="box"></span>
+        ประธาน
+      </label>
+      <label class="checkbox">
+        <input type="checkbox">
+        <span class="box"></span>
+        กรรมการ
+      </label>
+    </div>
+    <div class="committee-row">
+      <span>5.</span>
+      <input type="text" name="committee5">
+      <label class="checkbox">
+        <input type="checkbox">
+        <span class="box"></span>
+        ประธาน
+      </label>
+      <label class="checkbox">
+        <input type="checkbox">
+        <span class="box"></span>
+        กรรมการ
+      </label>
+    </div>
+    <div class="committee-row">
+      <span>6.</span>
+      <input type="text" name="committee6">
+      <label class="checkbox">
+        <input type="checkbox">
+        <span class="box"></span>
+        ประธาน
+      </label>
+      <label class="checkbox">
+        <input type="checkbox">
+        <span class="box"></span>
+        กรรมการ
+      </label>
+    </div>
+    <div class="committee-row">
+      <span>7.</span>
+      <input type="text" name="committee7">
+      <label class="checkbox">
+        <input type="checkbox">
+        <span class="box"></span>
+        ประธาน
+      </label>
+      <label class="checkbox">
+        <input type="checkbox">
+        <span class="box"></span>
+        กรรมการ
+      </label>
+    </div>
+    <label class="line" style="margin-left: 1.5cm; margin-top: 10px;">
+      จึงเรียนมาเพื่อโปรดพิจารณาดำเนินการ
+    </label>
+
+    <!-- ลายเซ็น -->
+    <div class="signature-section" style="margin-top: 30px; margin-left: 50%;">
+      <div class="sig-name-row">
+        <span class="paren">(</span>
+        <div class="name-input-wrap"><input type="text" name="chairName" disabled /></div>
+        <span class="paren">)</span>
+      </div>
+      <div class="sig-name-row" style="justify-content: center; margin-top: 4px;margin-bottom: 0.5cm;">
+        <span>ประธานคณะกรรมการผู้รับผิดชอบหลักสูตร</span>
+      </div>
+      <span>…………/……….……/………….&ensp;</span>
+    </div>
+
+    <!-- ความเห็น -->
+    <p class="official-section-title" style="margin-top: 30px;margin-bottom: 1.0cm;">
+      <u>ความเห็นของคณบดีบัณฑิตวิทยาลัย</u>
+    </p>
+
+    <div class="comment-line" style="margin-bottom: 0.8cm;"></div>
+
+    <!-- ลายเซ็นคณบดี -->
+    <div class="signature-section" style="margin-top: 30px; margin-left: 50%;">
+      <div class="sig-name-row">
+        <span class="paren">(</span>
+        <div class="name-input-wrap"><input type="text" name="chairName" disabled /></div>
+        <span class="paren">)</span>
+      </div>
+      <div class="sig-name-row" style="justify-content: center; margin-right: 50px;margin-bottom: 0.5cm;">
+        <span>คณบดีบัณฑิตวิทยาลัย</span>
+      </div>
+      <span>…………/……….……/………….&ensp;</span>
+    </div>
+
+    <!-- หมายเหตุ -->
+    <div style="margin-top: 1.2cm; border: 1px solid #000; padding: 10px 12px; font-size: 16px; line-height: 1.5;">
+      <p style="text-align: justify; text-indent: -2.6cm; margin-left: 2.6cm;">
+        <strong>แบบ บว 2</strong>
+        ใช้เมื่อนิสิตเสนอขออนุมัติจัดประชุมพิจารณาเค้าโครงวิทยานิพนธ์ต่อคณบดีบัณฑิตวิทยาลัยผ่านประธานคณะกรรมการผู้รับผิดชอบหลักสูตร
+        เพื่อกำหนดวัน เวลา สถานที่และคณะกรรมการสอบ
+        <span style="text-decoration: underline;">
+          เมื่อได้รับอนุมัติแล้วให้นิสิตสำเนาไว้ที่หลักสูตร &ensp;&ensp; 1 ชุด ส่วนต้นฉบับเก็บไว้ที่นิสิตเพื่อยื่นพร้อม
+          บว 1 และ บว 3
+          ตอนขออนุมัติเค้าโครงวิทยานิพนธ์จากคณบดีบัณฑิตวิทยาลัย
+        </span>
+      </p>
+    </div>
+
+    <!-- logo -->
+    <div style="display: flex; justify-content: center; margin-top: 50px;">
+      <img src="TsuLOGO.png" style="width: 170px;">
+    </div>
+
+  </div>
+
+  <!-- ปุ่มบันทึก PDF -->
+  <button type="button" id="saveBtn" onclick="exportPDF()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="7 10 12 15 17 10" />
+      <line x1="12" y1="15" x2="12" y2="3" />
+    </svg>
+    บันทึก PDF
+  </button>
+
+  <script src="b2.js"></script>
+</body>
+
+</html>
